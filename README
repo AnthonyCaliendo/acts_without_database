@@ -1,0 +1,35 @@
+ActsWithoutDatabase
+===================
+
+ActiveRecord comes with a lot of nice things that aren't really dependent on having a database backed model. The most obvious example of this is the validation framework baked into ActiveRecord. Also, there are several plugins which add some useful behavior to ActiveRecord objects but don't rely on having a database.
+
+For certain cases where you only want a form/command object to ease the use of validating and handling user input (such as advanced search), ActsWithoutDatabase allows you to use most of the functionality provided by ActiveRecord without needing to define an unnecessary table.
+
+
+How to Use
+=======
+
+1) Have your model object extend ActiveRecord::Base
+2) Call the class method "acts_without_database", passing a hash of column names => column types.
+
+
+Limitations
+=======
+
+Anything that actually needs to hit a database (e.g. find, save, update, etc.) is not going to work.
+belongs_to associations will work if you define the column for the foreign key and are associating with a database backed object, but I doubt any other associations will work right.
+
+
+Example
+=======
+
+class FooSearchCriteria < ActiveRecord::Base
+  acts_without_database :page => :integer, :per_page => :integer, :query => :string
+
+  validates_presence_of  :query
+  validates_numericality_of :page, :per_page, :only_integer => true, :greater_than => 0
+end
+
+
+
+Copyright (c) 2009 Anthony Caliendo, released under the MIT license
